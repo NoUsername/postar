@@ -10,7 +10,11 @@ var _ = require('underscore');
 
 var app = express();
 
-var MAX_CACHE_SIZE = 2;
+var MAX_CACHE_SIZE = 20;
+
+app.set('view engine', 'jade');
+
+app.use('/static', express.static(__dirname + '/static'));
 
 app.use('/post', function(req, res, next) {
 	console.log("MW!");
@@ -54,11 +58,13 @@ app.get('/', function(req, res) { res.redirect('/get/welcome'); });
 app.get('/get/:id', function(req, res) {
 	var id = req.route.params["id"];
 	var obj = storage[id];
-	if (!obj) {
-		res.send("Sorry, don't have that (anymore?)");
-	} else {
-		res.send("There's something posted:<br/>" + obj.value);
+	var value = null;
+	if (obj) {
+		value = obj.value;
 	}
+	res.render('show',
+		{host: req.host, key: id, value: value}
+		);
 });
 
 app.post('/post/:id', function(req, res) {

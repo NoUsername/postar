@@ -1,0 +1,19 @@
+extend layout
+block content
+  if (value == null)
+    div(class='alert alert-info') No such entry (anymore?)
+  else
+    | Saved data:
+    pre
+      code #{value}
+  div(class='panel panel-default')
+    .div(class='panel-body')
+      Want to 
+      if(value)
+        | edit 
+      else
+        | create 
+      |  this post just use your favourite http tool like:
+      pre curl --data="new post content :)" http://#{host}/post/#{key}
+      | or
+      pre wget -O- --post-data "new post content :)" http://#{host}/post/#{key}
