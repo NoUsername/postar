@@ -1,11 +1,12 @@
 extend layout
 block content
   if (value == null)
-    div(class='alert alert-info') No such entry (anymore?)
+    div(class='alert alert-info') No such entry (expired?)
   else
-    | Saved data:
+    | Post data
     pre
       code #{value}
+  | Info
   div(class='panel panel-default')
     .div(class='panel-body')
       if (post)

@@ -7,10 +7,12 @@
 
 var express = require('express');
 var _ = require('underscore');
+var fs = require('fs');
 
 var app = express();
 
 var MAX_CACHE_SIZE = 20;
+var MAX_DATA_SIZE = 1024*100; // 100kb
 
 app.set('view engine', 'jade');
 
@@ -21,7 +23,12 @@ app.use('/post', function(req, res, next) {
     var data = '';
     req.setEncoding('utf8');
     req.on('data', function(chunk) { 
+    	if (req.tooLong) { return; }
         data += chunk;
+        if (data.length > MAX_DATA_SIZE) {
+        	data = data.substring(0, MAX_DATA_SIZE);
+        	req.tooLong = true;
+        }
     });
     req.on('end', function() {
         req.rawBody = data;
@@ -84,12 +91,28 @@ app.post('/post/:id', function(req, res) {
 	var id = req.route.params["id"];
 	console.log("storing: " + req.rawBody);
 	store(id, req.rawBody);
-	res.send("OK\n");
+	if (req.tooLong === true) {
+		return res.send("WARN: toolong\n");
+	}
+	return res.send("OK\n");
 });
-
-store('welcome', 'Welcome to postAr!', true);
 
 // behind nginx
 app.enable('trust proxy');
 
-app.listen(8888, '127.0.0.1');
+// read the info part of the readme file and use it as postAr's welcome text
+fs.readFile('./README.md', 'utf8', function (err,data) {
+  if (err) {
+    return console.log(err);
+  }
+  var infoRegex = /<!--infostart-->([.\s\S]+)<!--infoend-->/;
+  var match = infoRegex.exec(data);
+  var infoText = "ERR, could not read README.md";
+  if (match && match.length > 0) {
+  	infoText = match[1];
+  }
+  store('welcome', 'Welcome to postAr!\n' + infoText, true);
+
+  // start postAr
+  app.listen(8888, '127.0.0.1');
+});
