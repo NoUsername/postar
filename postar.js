@@ -87,6 +87,10 @@ app.get('/get/:id?', function(req, res) {
 	res.render('show', viewObject);
 });
 
+app.get('/post/:id', function(req, res) {
+	return res.redirect('/get/' + req.route.params["id"]);
+});
+
 app.post('/post/:id', function(req, res) {
 	var id = req.route.params["id"];
 	console.log("storing: " + req.rawBody);
