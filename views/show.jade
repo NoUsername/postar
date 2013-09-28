@@ -8,12 +8,17 @@ block content
       code #{value}
   div(class='panel panel-default')
     .div(class='panel-body')
-      Want to 
-      if(value)
-        | edit 
-      else
-        | create 
-      |  this post just use your favourite http tool like:
-      pre curl --data="new post content :)" http://#{host}/post/#{key}
-      | or
-      pre wget -O- --post-data "new post content :)" http://#{host}/post/#{key}
+      if (post)
+        p Want to create a new post? 
+          a(href='/get/#{randomKey}') Click here
+      if (!post || !post.sticky)
+        if(value)
+          | To edit 
+        else
+          | To create 
+        |  this post just use your favourite http tool like:
+        pre curl --data "new post content :)" http://#{host}/post/#{key}
+        | or
+        pre wget -q -O - --post-data "new post content :)" http://#{host}/post/#{key}
+        a(href='/get/#{key}') Refresh
+        |  to see if your post arrived already.

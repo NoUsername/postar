@@ -16,8 +16,8 @@ app.set('view engine', 'jade');
 
 app.use('/static', express.static(__dirname + '/static'));
 
+// expressjs doesn't support rawBody anymore by default, workaround:
 app.use('/post', function(req, res, next) {
-	console.log("MW!");
     var data = '';
     req.setEncoding('utf8');
     req.on('data', function(chunk) { 
@@ -47,31 +47,44 @@ function cleanup() {
 	}
 }
 
+/**
+* @param sticky must only be set to true for internal/admin posts
+*	sticky posts won't be garbage collected and cannot be overwritten
+*/
 function store(key, val, sticky) {
 	sticky = sticky || false;
+	if (!sticky) {
+		// check if overwrite is allowed (current post doesn't exist or is non-sticky)
+		var current = storage[key];
+		if (current && current.sticky === true) {
+			console.log("tried to overwrite sticky post, not allowed!");
+		}
+	}
 	storage[key] = {key:key, value:val, sticky:sticky, time:new Date().getTime()};
 	cleanup();
 }
 
 app.get('/', function(req, res) { res.redirect('/get/welcome'); });
 
-app.get('/get/:id', function(req, res) {
+app.get('/get/:id?', function(req, res) {
 	var id = req.route.params["id"];
-	var obj = storage[id];
-	var value = null;
-	if (obj) {
-		value = obj.value;
+	if (!id || id.length < 1) {
+		return res.redirect('/get/welcome');
 	}
-	res.render('show',
-		{host: req.host, key: id, value: value}
-		);
+	var obj = storage[id];
+	var viewObject = {host:req.host, key: id, post: obj};
+	if (obj) {
+		viewObject.value = obj.value;
+	}
+	viewObject.randomKey = _.sample("abcdefghijklmnopqrstuvwxyz0123456789_-".split(""),5).join("");
+	res.render('show', viewObject);
 });
 
 app.post('/post/:id', function(req, res) {
 	var id = req.route.params["id"];
 	console.log("storing: " + req.rawBody);
 	store(id, req.rawBody);
-	res.send("OK");
+	res.send("OK\n");
 });
 
 store('welcome', 'Welcome to postAr!', true);
@@ -79,4 +92,4 @@ store('welcome', 'Welcome to postAr!', true);
 // behind nginx
 app.enable('trust proxy');
 
-app.listen(8888);
+app.listen(8888, '127.0.0.1');

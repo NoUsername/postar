@@ -6,10 +6,15 @@ html
   body
     div(class='container')
       div(class='row')
-        header
-          h1 postAr
+        header(style='text-align: center')
+          //h1 postAr
+          a(href='/')
+            img(src='/static/images/logo.jpg' style='max-height:8em')
         .container
           .main-content
             block content
-        footer
-          p Running on node with Express & Jade
+      div(class='row')
+        div(class='col-xs-6') Running on node with Express & Jade
+        div(class='col-xs-6' style='text-align: right') Created by 
+          a(href='http://paukl.at') Paul Klingelhuber
+          |  (2013)

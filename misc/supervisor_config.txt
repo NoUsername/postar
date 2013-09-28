@@ -1,0 +1,10 @@
+[program:postar]
+command=node postar
+directory=/var/node/postar
+user=www-data
+autostart=true
+startsecs=20
+stdout_logfile=out.log
+stderr_logfile=err.log
+stdout_logfile_maxbytes=1MB
+stderr_logfile_maxbytes=1MB
