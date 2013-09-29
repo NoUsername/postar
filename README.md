@@ -40,5 +40,9 @@ Now you and me can easily accomplish this task via:
 
 ... and browse to [http://localhost:8888/](http://localhost:8080/ "http://localhost:8888/") 
 
+To configure postAr's behaviour, create a ``config.json`` file and override values from the config object (see ``postar.js``).
+
+If you want to deploy postAr on your server, check out the ``misc`` folder which contains nginx and supervisord configs.
+
 <br/><br/>
 by [Paul Klingelhuber](http://paukl.at "Paul Klingelhuber") (2013)

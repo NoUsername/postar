@@ -8,11 +8,26 @@
 var express = require('express');
 var _ = require('underscore');
 var fs = require('fs');
+var config = {
+	"host":"127.0.0.1",
+	"port":8888,
+	"behindProxy": true,
+	"customFooter": '',
+	"maxCacheSize": 20,
+	"maxDataSize": 102400, // 100kb
+	"welcomeFooter": ''
+};
+
+try {
+	config = _.extend(config, require('./config.json'));
+} catch (err) {
+	console.log('not loading custom config: ' + err);
+}
 
 var app = express();
 
-var MAX_CACHE_SIZE = 20;
-var MAX_DATA_SIZE = 1024*100; // 100kb
+var MAX_CACHE_SIZE = config.maxCacheSize;
+var MAX_DATA_SIZE = config.maxDataSize; // 100kb
 
 app.set('view engine', 'jade');
 
@@ -79,7 +94,7 @@ app.get('/get/:id?', function(req, res) {
 		return res.redirect('/get/welcome');
 	}
 	var obj = storage[id];
-	var viewObject = {host:req.host, key: id, post: obj};
+	var viewObject = {host:req.host, key: id, post: obj, footer: config.customFooter};
 	if (obj) {
 		viewObject.value = obj.value;
 	}
@@ -101,8 +116,10 @@ app.post('/post/:id', function(req, res) {
 	return res.send("OK\n");
 });
 
-// behind nginx
-app.enable('trust proxy');
+if (config.behindProxy) {
+	// behind nginx
+	app.enable('trust proxy');	
+}
 
 // read the info part of the readme file and use it as postAr's welcome text
 fs.readFile('./README.md', 'utf8', function (err,data) {
@@ -115,8 +132,8 @@ fs.readFile('./README.md', 'utf8', function (err,data) {
   if (match && match.length > 0) {
   	infoText = match[1];
   }
-  store('welcome', 'Welcome to postAr!\n' + infoText, true);
+  store('welcome', 'Welcome to postAr!\n' + infoText + config.welcomeFooter, true);
 
   // start postAr
-  app.listen(8888, '127.0.0.1');
+  app.listen(config.port, config.host);
 });
