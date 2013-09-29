@@ -80,10 +80,12 @@ function store(key, val, sticky) {
 		var current = storage[key];
 		if (current && current.sticky === true) {
 			console.log("tried to overwrite sticky post, not allowed!");
+			return false;
 		}
 	}
 	storage[key] = {key:key, value:val, sticky:sticky, time:new Date().getTime()};
 	cleanup();
+	return true;
 }
 
 app.get('/', function(req, res) { res.redirect('/get/welcome'); });
@@ -109,7 +111,10 @@ app.get('/post/:id', function(req, res) {
 app.post('/post/:id', function(req, res) {
 	var id = req.route.params["id"];
 	console.log("storing: " + req.rawBody);
-	store(id, req.rawBody);
+	var ok = store(id, req.rawBody);
+	if (!ok) {
+		return res.send("ERR: cannot write to sticky post\n");
+	}
 	if (req.tooLong === true) {
 		return res.send("WARN: toolong\n");
 	}
