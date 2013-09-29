@@ -1,11 +1,20 @@
 extend layout
 block content
-  if (value == null)
-    div(class='alert alert-info') No such entry (expired?)
-  else
-    | Post data
-    pre
-      code #{value}
+  div(class='row')
+    if (value == null)
+      div(class='col-xs-12' style='text-align: right; margin-bottom: 1em')
+        a(class='btn btn-primary' href='/get/#{key}') Refresh
+      div(class='col-xs-12')
+        div(class='alert alert-info') No such entry (expired?)
+    else
+      div(class='col-xs-12' style='text-align: right')
+        div(class='btn-group')
+          a(class='btn btn-primary' href='/get/#{randomKey}') New post
+          a(class='btn btn-primary' href='/get/#{key}') Refresh
+      div(class='col-xs-12' stlye='vertical-align: bottom')
+        | Post data
+        pre
+          code #{value}
   | Info
   div(class='panel panel-default')
     .div(class='panel-body')
@@ -22,4 +31,5 @@ block content
         | or
         pre wget -q -O - --post-data "new post content :)" http://#{host}/post/#{key}
         a(href='/get/#{key}') Refresh
-        |  to see if your post arrived already.
+        - var refreshHint = (value == null) ? 'arrived already' : 'changed'
+        |  to see if your post #{refreshHint}.
