@@ -7,14 +7,17 @@ block content
       div(class='col-xs-12')
         div(class='alert alert-info') No such entry (expired?)
     else
-      div(class='col-xs-12' style='text-align: right')
-        div(class='btn-group')
-          a(class='btn btn-primary' href='/get/#{randomKey}') New post
-          a(class='btn btn-primary' href='/get/#{key}') Refresh
-      div(class='col-xs-12' stlye='vertical-align: bottom')
-        | Post data
-        pre
-          code #{value}
+      div(class='row')
+        div(class='col-xs-12' style='text-align: right')
+          div(class='btn-group')
+            a(class='btn btn-primary' href='/get/#{randomKey}') New post
+            a(class='btn btn-primary' href='/get/#{key}') Refresh
+      div(class='row')
+        div(class='col-xs-12' stlye="text-align: center") #{timeString}
+      div(class='row')
+        div(class='col-xs-12')
+          pre
+            code #{value}
   | Info
   div(class='panel panel-default')
     .div(class='panel-body')

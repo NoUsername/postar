@@ -7,7 +7,9 @@
 
 var express = require('express');
 var _ = require('underscore');
+var moment = require('moment');
 var fs = require('fs');
+var postarPackage = require('./package.json');
 var config = {
 	"host":"127.0.0.1",
 	"port":8888,
@@ -98,9 +100,13 @@ app.get('/get/:id?', function(req, res) {
 	var obj = storage[id];
 	var viewObject = {host:req.host, key: id, post: obj, footer: config.customFooter};
 	if (obj) {
+		var dateTime = moment(obj.time).format("YYYY-MM-DD hh:mm:ss");
+		var timeAgo = moment(obj.time).fromNow();
+		viewObject.timeString = "Posted " + timeAgo + " (" + dateTime +")";
 		viewObject.value = obj.value;
 	}
 	viewObject.randomKey = _.sample("abcdefghijklmnopqrstuvwxyz0123456789_-".split(""),5).join("");
+	viewObject.appVersion = postarPackage.version;
 	res.render('show', viewObject);
 });
 
