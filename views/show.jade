@@ -1,38 +1,40 @@
 extend layout
 block content
-  div(class='row')
-    if (value == null)
+  if (value == null)
+    div(class='row')
       div(class='col-xs-12' style='text-align: right; margin-bottom: 1em')
         a(class='btn btn-primary' href='/get/#{key}') Refresh
       div(class='col-xs-12')
         div(class='alert alert-info') No such entry (expired?)
-    else
-      div(class='row')
-        div(class='col-xs-12' style='text-align: right')
-          div(class='btn-group')
-            a(class='btn btn-primary' href='/get/#{randomKey}') New post
-            a(class='btn btn-primary' href='/get/#{key}') Refresh
-      div(class='row')
-        div(class='col-xs-12' stlye="text-align: center") #{timeString}
-      div(class='row')
-        div(class='col-xs-12')
-          pre
-            code #{value}
-  | Info
-  div(class='panel panel-default')
-    .div(class='panel-body')
-      if (post)
-        p Want to create a new post? 
-          a(href='/get/#{randomKey}') Click here
-      if (!post || !post.sticky)
-        if(value)
-          | To edit 
-        else
-          | To create 
-        |  this post just use your favourite http tool like:
-        pre curl --data "new post content :)" http://#{host}/post/#{key}
-        | or
-        pre wget -q -O - --post-data "new post content :)" http://#{host}/post/#{key}
-        a(href='/get/#{key}') Refresh
-        - var refreshHint = (value == null) ? 'arrived already' : 'changed'
-        |  to see if your post #{refreshHint}.
+  else
+    div(class='row')
+      div(class='col-xs-12' style='text-align: right')
+        div(class='btn-group')
+          a(class='btn btn-primary' href='/get/#{randomKey}') New post
+          a(class='btn btn-primary' href='/get/#{key}') Refresh
+    div(class='row')
+      div(class='col-xs-12' stlye="text-align: center") #{timeString}
+    div(class='row')
+      div(class='col-xs-12')
+        pre
+          code #{value}
+  div(class='row')
+    div(class='col-xs-12')
+      | Info
+      div(class='panel panel-default')
+        .div(class='panel-body')
+          if (post)
+            p Want to create a new post? 
+              a(href='/get/#{randomKey}') Click here
+          if (!post || !post.sticky)
+            if(value)
+              | To edit 
+            else
+              | To create 
+            |  this post just use your favourite http tool like:
+            pre curl --data "new post content :)" http://#{host}/post/#{key}
+            | or
+            pre wget -q -O - --post-data "new post content :)" http://#{host}/post/#{key}
+            a(href='/get/#{key}') Refresh
+            - var refreshHint = (value == null) ? 'arrived already' : 'changed'
+            |  to see if your post #{refreshHint}.
