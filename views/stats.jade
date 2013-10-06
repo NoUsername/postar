@@ -1,0 +1,8 @@
+extend layout
+block content
+  div(class='row')
+    h1(class='col-xs-12') Statistics
+    div(class='panel panel-default')
+      div(class='col-xs-12') Gets: #{stats.gets}
+      div(class='col-xs-12') Posts: #{stats.posts}
+      div(class='col-xs-12') Since: #{stats.since}

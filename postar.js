@@ -9,6 +9,7 @@ var express = require('express');
 var _ = require('underscore');
 var moment = require('moment');
 var fs = require('fs');
+var stats = require('./stats').create();
 var postarPackage = require('./package.json');
 var config = {
 	"host":"127.0.0.1",
@@ -30,6 +31,7 @@ var app = express();
 
 var MAX_CACHE_SIZE = config.maxCacheSize;
 var MAX_DATA_SIZE = config.maxDataSize; // 100kb
+var TIMEFORMAT = "YYYY-MM-DD hh:mm:ss";
 
 app.set('view engine', 'jade');
 
@@ -90,6 +92,11 @@ function store(key, val, sticky) {
 	return true;
 }
 
+function addGlobalViewData(viewObject) {
+	viewObject.appVersion = postarPackage.version;
+	return viewObject;
+}
+
 app.get('/', function(req, res) { res.redirect('/get/welcome'); });
 
 app.get('/get/:id?', function(req, res) {
@@ -100,18 +107,25 @@ app.get('/get/:id?', function(req, res) {
 	var obj = storage[id];
 	var viewObject = {host:req.host, key: id, post: obj, footer: config.customFooter};
 	if (obj) {
-		var dateTime = moment(obj.time).format("YYYY-MM-DD hh:mm:ss");
+		var dateTime = moment(obj.time).format(TIMEFORMAT);
 		var timeAgo = moment(obj.time).fromNow();
 		viewObject.timeString = "Posted " + timeAgo + " (" + dateTime +")";
 		viewObject.value = obj.value;
+		stats.onGet();
 	}
 	viewObject.randomKey = _.sample("abcdefghijklmnopqrstuvwxyz0123456789_-".split(""),5).join("");
-	viewObject.appVersion = postarPackage.version;
+	addGlobalViewData(viewObject);
 	res.render('show', viewObject);
 });
 
 app.get('/post/:id', function(req, res) {
 	return res.redirect('/get/' + req.route.params["id"]);
+});
+
+app.get('/stats', function(req, res) {
+	var viewStats = stats.getStats();
+	viewStats.since = moment(viewStats.since).format(TIMEFORMAT);
+	res.render('stats', addGlobalViewData({stats: viewStats}));
 });
 
 app.post('/post/:id', function(req, res) {
@@ -121,6 +135,7 @@ app.post('/post/:id', function(req, res) {
 	if (!ok) {
 		return res.send("ERR: cannot write to sticky post\n");
 	}
+	stats.onPost();
 	if (req.tooLong === true) {
 		return res.send("WARN: toolong\n");
 	}
