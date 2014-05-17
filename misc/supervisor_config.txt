@@ -1,10 +1,13 @@
 [program:postar]
-command=node postar
+command=env PATH="/usr/local/bin:/usr/bin:/bin" node postar
 directory=/var/node/postar
 user=www-data
 autostart=true
 startsecs=20
-stdout_logfile=out.log
-stderr_logfile=err.log
+stdout_logfile=postar-out.log
+stderr_logfile=postar-err.log
 stdout_logfile_maxbytes=1MB
 stderr_logfile_maxbytes=1MB
+stdout_logfile_backups=0
+stderr_logfile_backups=0
+
