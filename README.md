@@ -36,7 +36,7 @@ Now you and me can easily accomplish this task via:
 
 ## Go go go
     npm install
-    node postar
+    npm start
 
 ... and browse to [http://localhost:8888/](http://localhost:8080/ "http://localhost:8888/") 
 
