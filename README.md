@@ -52,4 +52,4 @@ If you want to deploy postAr on your server, check out the ``misc`` folder which
 	mocha
 
 <br/><br/>
-by [Paul Klingelhuber](http://paukl.at "Paul Klingelhuber") (2013)
+by [Paul Klingelhuber](http://paukl.at "Paul Klingelhuber") (2013 - 2015)
