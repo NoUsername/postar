@@ -12,7 +12,7 @@ var fs = require('fs');
 var stats = require('./stats').create();
 var postarPackage = require('./package.json');
 var config = {
-	"host":"127.0.0.1",
+	"host":"0.0.0.0",
 	"port":8888,
 	"behindProxy": true,
 	"customFooter": '',

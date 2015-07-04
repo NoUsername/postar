@@ -26,7 +26,6 @@ COPY ./views ${appBaseDir}/views
 COPY postar.js ${appBaseDir}/
 COPY README.md ${appBaseDir}/
 COPY stats.js ${appBaseDir}/
-COPY config.json ${appBaseDir}/
 
 # create run-script
 RUN printf "#!/bin/sh\ncd ${appBaseDir}\nnpm start" > /opt/postar.sh && \
@@ -37,4 +36,4 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENTRYPOINT /opt/postar.sh
 
-EXPOSE 1234
+EXPOSE 8888
