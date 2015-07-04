@@ -23,11 +23,10 @@ RUN mkdir -p ${appBaseDir}/static \
   ${appBaseDir}/views
 COPY ./static ${appBaseDir}/static
 COPY ./views ${appBaseDir}/views
-COPY postar.js \
-  README.md \
-  stats.js \
-  config.json \
-  ${appBaseDir}/
+COPY postar.js ${appBaseDir}/
+COPY README.md ${appBaseDir}/
+COPY stats.js ${appBaseDir}/
+COPY config.json ${appBaseDir}/
 
 # create run-script
 RUN printf "#!/bin/sh\ncd ${appBaseDir}\nnpm start" > /opt/postar.sh && \
